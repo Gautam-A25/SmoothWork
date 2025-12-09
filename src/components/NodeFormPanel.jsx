@@ -2,6 +2,13 @@ import React, { useEffect, useState } from "react";
 import { automations } from "../api/mockApi";
 import { NODE_TYPES } from "../types";
 
+/*
+  NodeFormPanel
+  - Shows editable fields for the currently selected node.
+  - Keeps a local copy of node.data while the user edits fields,
+    and calls `onChange` (parent) with the updated node when fields change.
+*/
+
 export default function NodeFormPanel({ node, onChange }) {
   const [local, setLocal] = useState(null);
   const [availableAutomations, setAvailableAutomations] = useState([]);
@@ -11,14 +18,10 @@ export default function NodeFormPanel({ node, onChange }) {
   }, []);
 
   useEffect(() => {
-    if (node && node.data) {
-      setLocal({ ...node.data });
-    } else {
-      setLocal(null);
-    }
+    setLocal(node && node.data ? { ...node.data } : null);
   }, [node]);
 
-  // ✅ HARD SAFETY GUARD — prevents ALL null crashes
+  // Safety: render placeholder when nothing is selected
   if (!node || !local) {
     return (
       <aside style={{ width: 320, padding: 12, borderLeft: "1px solid #ddd" }}>
@@ -28,7 +31,7 @@ export default function NodeFormPanel({ node, onChange }) {
     );
   }
 
-  const type = local?.nodeType;
+  const type = local.nodeType;
 
   function pushChange(nextData) {
     setLocal(nextData);
@@ -64,12 +67,14 @@ export default function NodeFormPanel({ node, onChange }) {
         <>
           <label>Title</label>
           <input
+            type="text"
             value={local.label || ""}
             onChange={(e) => updateField("label", e.target.value)}
           />
 
           <label>Description</label>
           <textarea
+            rows={3}
             value={local.description || ""}
             onChange={(e) => updateField("description", e.target.value)}
           />
@@ -80,18 +85,21 @@ export default function NodeFormPanel({ node, onChange }) {
         <>
           <label>Title</label>
           <input
+            type="text"
             value={local.label || ""}
             onChange={(e) => updateField("label", e.target.value)}
           />
 
           <label>Description</label>
           <textarea
+            rows={3}
             value={local.description || ""}
             onChange={(e) => updateField("description", e.target.value)}
           />
 
           <label>Assignee</label>
           <input
+            type="text"
             value={local.assignee || ""}
             onChange={(e) => updateField("assignee", e.target.value)}
           />
@@ -102,18 +110,21 @@ export default function NodeFormPanel({ node, onChange }) {
         <>
           <label>Title</label>
           <input
+            type="text"
             value={local.label || ""}
             onChange={(e) => updateField("label", e.target.value)}
           />
 
           <label>Approver</label>
           <input
+            type="text"
             value={local.approver || ""}
             onChange={(e) => updateField("approver", e.target.value)}
           />
 
           <label>Condition</label>
           <input
+            type="text"
             value={local.condition || ""}
             onChange={(e) => updateField("condition", e.target.value)}
           />
@@ -124,6 +135,7 @@ export default function NodeFormPanel({ node, onChange }) {
         <>
           <label>Title</label>
           <input
+            type="text"
             value={local.label || ""}
             onChange={(e) => updateField("label", e.target.value)}
           />
@@ -146,6 +158,7 @@ export default function NodeFormPanel({ node, onChange }) {
               <div key={p}>
                 <label>{p}</label>
                 <input
+                  type="text"
                   value={local.params[p]}
                   onChange={(e) =>
                     pushChange({
@@ -163,24 +176,23 @@ export default function NodeFormPanel({ node, onChange }) {
         <>
           <label>Title</label>
           <input
+            type="text"
             value={local.label || ""}
             onChange={(e) => updateField("label", e.target.value)}
           />
 
           <label>Summary</label>
           <textarea
+            rows={3}
             value={local.summary || ""}
             onChange={(e) => updateField("summary", e.target.value)}
           />
         </>
       )}
+
       <button
         onClick={() => {
-          // Inform parent that this node should be deleted
-          onChange({
-            ...node,
-            __delete: true,
-          });
+          onChange && onChange({ ...node, __delete: true });
         }}
         style={{
           marginTop: 16,

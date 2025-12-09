@@ -4,6 +4,14 @@ import Sidebar from "./components/Sidebar";
 import NodeFormPanel from "./components/NodeFormPanel";
 import SimulationPanel from "./components/SimulationPanel";
 
+/*
+  App
+  - Acts as the central coordinator for the editor.
+  - Holds the selected node state.
+  - Bridges communication between the canvas, form panel, and simulation panel.
+  - Stores handler references exposed by FlowCanvas via refs.
+*/
+
 export default function App() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [nodeEdits, setNodeEdits] = useState(null);
@@ -54,24 +62,13 @@ export default function App() {
           }}
           focusNode={(id) => nodeFocusRef.current && nodeFocusRef.current(id)}
           autoLayout={() => autoLayoutRef.current && autoLayoutRef.current()}
-          undo={() =>
-            undoRedoRef.current &&
-            undoRedoRef.current.undo &&
-            undoRedoRef.current.undo()
-          }
-          redo={() =>
-            undoRedoRef.current &&
-            undoRedoRef.current.redo &&
-            undoRedoRef.current.redo()
-          }
+          undo={() => undoRedoRef.current?.undo && undoRedoRef.current.undo()}
+          redo={() => undoRedoRef.current?.redo && undoRedoRef.current.redo()}
           duplicate={() =>
-            undoRedoRef.current &&
-            undoRedoRef.current.duplicate &&
-            undoRedoRef.current.duplicate()
+            undoRedoRef.current?.duplicate && undoRedoRef.current.duplicate()
           }
           deleteSelected={() =>
-            undoRedoRef.current &&
-            undoRedoRef.current.deleteSelected &&
+            undoRedoRef.current?.deleteSelected &&
             undoRedoRef.current.deleteSelected()
           }
         />

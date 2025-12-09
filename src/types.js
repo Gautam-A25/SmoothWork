@@ -6,30 +6,34 @@ export const NODE_TYPES = {
   END: "end",
 };
 
-/**
- * Default data structure for nodes of each type.
- * Ensures forms have predictable fields to bind to.
- */
+/*
+  Default data shape for each node type.
+  This keeps the editor forms predictable and avoids undefined fields.
+*/
 export const DEFAULT_NODE_DATA = {
   [NODE_TYPES.START]: {
     label: "Start",
     description: "",
   },
+
   [NODE_TYPES.TASK]: {
     label: "Task",
     description: "",
     assignee: "",
   },
+
   [NODE_TYPES.APPROVAL]: {
     label: "Approval",
     approver: "",
-    condition: "", // e.g. "amount > 1000"
+    condition: "",
   },
+
   [NODE_TYPES.AUTOMATED]: {
     label: "Automated",
-    actionId: "", // references an automations id from mockApi
-    params: {}, // map of parameter values keyed by param name
+    actionId: "",
+    params: {},
   },
+
   [NODE_TYPES.END]: {
     label: "End",
     summary: "",

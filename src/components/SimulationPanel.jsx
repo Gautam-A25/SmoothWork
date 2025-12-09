@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { simulateWorkflow } from "../api/mockApi";
 import { NODE_TYPES } from "../types";
 
+/*
+  SimulationPanel
+  - Runs basic validation on the current workflow.
+  - Invokes simulateWorkflow() to produce a trace.
+  - Provides export/import, auto-arrange, undo/redo, duplicate and delete controls.
+  - Clicking a trace step centers/focuses that node in the canvas via focusNode().
+*/
+
 export default function SimulationPanel({
   getWorkflow,
   loadWorkflow,
@@ -28,6 +36,7 @@ export default function SimulationPanel({
       const hasOut = edges.some((e) => e.source === starts[0].id);
       if (!hasOut) errs.push("Start node must have an outgoing edge.");
     }
+
     nodes.forEach((n) => {
       const hasIn = edges.some((e) => e.target === n.id);
       const hasOut = edges.some((e) => e.source === n.id);
@@ -40,12 +49,14 @@ export default function SimulationPanel({
   async function onSimulate() {
     setErrors([]);
     setTrace(null);
+
     const wf = getWorkflow();
     const errs = validateWorkflow(wf);
     if (errs.length) {
       setErrors(errs);
       return;
     }
+
     setRunning(true);
     const res = await simulateWorkflow(wf);
     setTrace(res.trace || []);
@@ -66,6 +77,7 @@ export default function SimulationPanel({
   function onImport(e) {
     const file = e.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
       const wf = JSON.parse(evt.target.result);
@@ -75,11 +87,7 @@ export default function SimulationPanel({
   }
 
   function onTraceClick(item) {
-    if (!item) return;
-    if (!item.nodeId) {
-      console.warn("trace item has no nodeId:", item);
-      return;
-    }
+    if (!item || !item.nodeId) return;
     focusNode && focusNode(item.nodeId);
   }
 

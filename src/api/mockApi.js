@@ -12,31 +12,32 @@ export const automations = [
 ];
 
 /**
- * Simulate workflow.
- * Accepts: { nodes: [...], edges: [...] }
- * Returns: { success: true, trace: [...] } or { success: false, error: "..." }
+ * Simulates the execution of a workflow.
+ * Returns a step-by-step execution trace for each node.
  */
 export async function simulateWorkflow(workflow) {
-  // tiny artificial delay
+  // Simulated network / processing delay
   await new Promise((res) => setTimeout(res, 400));
 
   if (!workflow || !Array.isArray(workflow.nodes)) {
     return { success: false, error: "Invalid workflow payload" };
   }
 
-  // produce a basic trace in insertion order (for prototype)
   try {
-    const trace = (workflow.nodes || []).map((n, idx) => ({
-      step: idx + 1,
-      nodeId: n.id,
-      nodeType: n.data?.nodeType || "unknown",
-      message: `Executed ${n.data?.nodeType || "node"} (${
-        n.data?.label || n.id
+    const trace = workflow.nodes.map((node, index) => ({
+      step: index + 1,
+      nodeId: node.id,
+      nodeType: node.data?.nodeType || "unknown",
+      message: `Executed ${node.data?.nodeType || "node"} (${
+        node.data?.label || node.id
       })`,
     }));
 
     return { success: true, trace };
   } catch (err) {
-    return { success: false, error: err.message || "Simulation failed" };
+    return {
+      success: false,
+      error: err.message || "Simulation failed",
+    };
   }
 }

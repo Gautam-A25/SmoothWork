@@ -1,6 +1,11 @@
 import React from "react";
 import { NODE_TYPES } from "../types";
 
+/*
+  Sidebar
+  - Simple node palette used to drag new nodes onto the canvas.
+*/
+
 const NODES = [
   { type: NODE_TYPES.START, label: "Start" },
   { type: NODE_TYPES.TASK, label: "Task" },
