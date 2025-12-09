@@ -503,21 +503,6 @@ export default function FlowCanvas({
         <Controls />
         <MiniMap />
       </ReactFlow>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: 10,
-          left: 10,
-          background: "#111",
-          color: "#fff",
-          padding: "6px 10px",
-          borderRadius: 6,
-          fontSize: 12,
-        }}
-      >
-        Ctrl+Z = Undo | Ctrl+Y = Redo | Ctrl/Cmd+D = Duplicate
-      </div>
     </div>
   );
 }
