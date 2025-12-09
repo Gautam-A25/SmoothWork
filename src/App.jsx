@@ -10,8 +10,14 @@ export default function App() {
 
   const workflowGetterRef = useRef(null);
   const workflowLoaderRef = useRef(null);
-  const nodeFocusRef = useRef(null); // will hold the focus function
+  const nodeFocusRef = useRef(null);
   const autoLayoutRef = useRef(null);
+  const undoRedoRef = useRef({
+    undo: null,
+    redo: null,
+    duplicate: null,
+    deleteSelected: null,
+  });
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -25,6 +31,7 @@ export default function App() {
         setWorkflowLoader={(fn) => (workflowLoaderRef.current = fn)}
         setNodeFocusHandler={(fn) => (nodeFocusRef.current = fn)}
         setAutoLayoutHandler={(fn) => (autoLayoutRef.current = fn)}
+        setUndoRedoHandlers={(handlers) => (undoRedoRef.current = handlers)}
       />
 
       <div style={{ display: "flex", flexDirection: "column", width: 340 }}>
@@ -46,7 +53,27 @@ export default function App() {
             workflowLoaderRef.current && workflowLoaderRef.current(wf);
           }}
           focusNode={(id) => nodeFocusRef.current && nodeFocusRef.current(id)}
-          autoLayout={() => autoLayoutRef.current && autoLayoutRef.current()} // ✅ ADD
+          autoLayout={() => autoLayoutRef.current && autoLayoutRef.current()}
+          undo={() =>
+            undoRedoRef.current &&
+            undoRedoRef.current.undo &&
+            undoRedoRef.current.undo()
+          }
+          redo={() =>
+            undoRedoRef.current &&
+            undoRedoRef.current.redo &&
+            undoRedoRef.current.redo()
+          }
+          duplicate={() =>
+            undoRedoRef.current &&
+            undoRedoRef.current.duplicate &&
+            undoRedoRef.current.duplicate()
+          }
+          deleteSelected={() =>
+            undoRedoRef.current &&
+            undoRedoRef.current.deleteSelected &&
+            undoRedoRef.current.deleteSelected()
+          }
         />
       </div>
     </div>

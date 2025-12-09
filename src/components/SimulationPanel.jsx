@@ -7,6 +7,10 @@ export default function SimulationPanel({
   loadWorkflow,
   focusNode,
   autoLayout,
+  undo,
+  redo,
+  duplicate,
+  deleteSelected,
 }) {
   const [errors, setErrors] = useState([]);
   const [trace, setTrace] = useState(null);
@@ -24,7 +28,6 @@ export default function SimulationPanel({
       const hasOut = edges.some((e) => e.source === starts[0].id);
       if (!hasOut) errs.push("Start node must have an outgoing edge.");
     }
-
     nodes.forEach((n) => {
       const hasIn = edges.some((e) => e.target === n.id);
       const hasOut = edges.some((e) => e.source === n.id);
@@ -37,15 +40,12 @@ export default function SimulationPanel({
   async function onSimulate() {
     setErrors([]);
     setTrace(null);
-
     const wf = getWorkflow();
     const errs = validateWorkflow(wf);
-
     if (errs.length) {
       setErrors(errs);
       return;
     }
-
     setRunning(true);
     const res = await simulateWorkflow(wf);
     setTrace(res.trace || []);
@@ -57,7 +57,6 @@ export default function SimulationPanel({
     const blob = new Blob([JSON.stringify(wf, null, 2)], {
       type: "application/json",
     });
-
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "workflow.json";
@@ -67,7 +66,6 @@ export default function SimulationPanel({
   function onImport(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (evt) => {
       const wf = JSON.parse(evt.target.result);
@@ -77,7 +75,6 @@ export default function SimulationPanel({
   }
 
   function onTraceClick(item) {
-    console.log("trace item clicked:", item);
     if (!item) return;
     if (!item.nodeId) {
       console.warn("trace item has no nodeId:", item);
@@ -87,26 +84,86 @@ export default function SimulationPanel({
   }
 
   return (
-    <div style={{ padding: 12, borderTop: "1px solid #ddd" }}>
-      <h4>Simulation</h4>
+    <div
+      style={{
+        padding: 12,
+        borderTop: "1px solid #ddd",
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+      }}
+    >
+      <h4 style={{ marginTop: 0 }}>Simulation</h4>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        <button onClick={onSimulate} disabled={running}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <button
+          onClick={onSimulate}
+          disabled={running}
+          style={{ padding: "8px 10px" }}
+        >
           {running ? "Running..." : "Simulate"}
         </button>
 
-        <button onClick={onExport}>Export</button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button onClick={onExport} style={{ padding: "8px 10px" }}>
+            Export
+          </button>
 
-        <button onClick={() => autoLayout && autoLayout()}>Auto Arrange</button>
+          <button
+            onClick={() => autoLayout && autoLayout()}
+            style={{ padding: "8px 10px" }}
+          >
+            Auto Arrange
+          </button>
 
-        <label style={{ cursor: "pointer", paddingLeft: 8 }}>
-          Import
-          <input type="file" hidden onChange={onImport} />
-        </label>
+          <button
+            onClick={() => undo && undo()}
+            style={{ padding: "8px 10px" }}
+          >
+            Undo
+          </button>
+
+          <button
+            onClick={() => redo && redo()}
+            style={{ padding: "8px 10px" }}
+          >
+            Redo
+          </button>
+
+          <button
+            onClick={() => duplicate && duplicate()}
+            style={{ padding: "8px 10px" }}
+          >
+            Duplicate Selected
+          </button>
+
+          <button
+            onClick={() => deleteSelected && deleteSelected()}
+            style={{
+              padding: "8px 10px",
+              background: "#e53935",
+              color: "#fff",
+            }}
+          >
+            Delete Selected
+          </button>
+
+          <label
+            style={{
+              cursor: "pointer",
+              paddingLeft: 8,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            Import
+            <input type="file" hidden onChange={onImport} />
+          </label>
+        </div>
       </div>
 
       {errors.length > 0 && (
-        <div style={{ color: "red", marginBottom: 8 }}>
+        <div style={{ color: "red" }}>
           <ul>
             {errors.map((e, i) => (
               <li key={i}>{e}</li>
@@ -116,14 +173,18 @@ export default function SimulationPanel({
       )}
 
       {trace && (
-        <ol>
+        <ol style={{ marginTop: 8 }}>
           {trace.map((t, i) => (
             <li
               key={i}
-              style={{ cursor: "pointer", padding: "6px 4px" }}
+              style={{
+                cursor: "pointer",
+                padding: "6px 4px",
+                borderBottom: "1px solid #eee",
+              }}
               onClick={() => onTraceClick(t)}
             >
-              {t.message}
+              <div style={{ fontWeight: 600 }}>{t.message}</div>
               <div style={{ fontSize: 12, color: "#666" }}>
                 nodeId: {t.nodeId}
               </div>
