@@ -1,0 +1,76 @@
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  font-family: system-ui, sans-serif;
+}
+
+aside {
+  background: #f8f9fa;
+}
+
+.react-flow__node-default {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.react-flow__node {
+  transition: border 0.2s ease;
+}
+.react-flow__node:hover {
+  border: 2px solid #007bff;
+}
+.react-flow__edge-path {
+  stroke: #888;
+  stroke-width: 2;
+}
+.react-flow__edge-path:hover {
+  stroke: #007bff;
+  stroke-width: 3;
+}
+.react-flow__handle {
+  background: #007bff;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+}
+.react-flow__handle:hover {
+  background: #0056b3;
+}
+.react-flow__minimap-node {
+  stroke: #007bff;
+  fill: #cce5ff;
+}
+.react-flow__minimap-node.selected {
+  stroke: #0056b3;
+  fill: #99ccff;
+}
+.react-flow__background {
+  background-color: #f0f0f0;
+}
+.react-flow__zoom-pane {
+  cursor: grab;
+}
+.react-flow__zoom-pane:active {
+  cursor: grabbing;
+}
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover {
+  background-color: #0056b3;
+}
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
